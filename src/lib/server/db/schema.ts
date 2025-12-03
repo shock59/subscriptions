@@ -20,7 +20,7 @@ export const channel = sqliteTable("channel", {
   youtubeId: text("youtube_id").notNull().unique(),
 });
 
-export const subscriptions = sqliteTable("subscriptions", {
+export const subscription = sqliteTable("subscription", {
   id: text("id").primaryKey(),
   creationDate: integer("creation_date", { mode: "timestamp" }).notNull(),
   userId: text("user_id")

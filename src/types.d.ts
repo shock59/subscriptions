@@ -1,0 +1,3 @@
+type SubscriptionData = {
+  youtubeName: string;
+};

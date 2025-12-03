@@ -80,9 +80,12 @@ export const actions: Actions = {
     });
 
     try {
-      await db
-        .insert(table.user)
-        .values({ id: userId, username, passwordHash });
+      await db.insert(table.user).values({
+        id: userId,
+        creationDate: new Date(),
+        username,
+        passwordHash,
+      });
 
       const sessionToken = auth.generateSessionToken();
       const session = await auth.createSession(sessionToken, userId);

@@ -10,6 +10,10 @@ export default async function getYoutubeFeed(
     );
 
     const videos = feed.items.map((item) => ({
+      id:
+        (item.link?.match(/(?<=youtube.com\/(watch\?v=)|(shorts\/)).*/) ?? [
+          null,
+        ])[0] ?? "unknown",
       title: item.title ?? "Video",
       link:
         item.link ?? feed.link ?? "https://youtube.com/channel/${youtubeId}",

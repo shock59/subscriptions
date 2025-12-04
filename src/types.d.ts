@@ -4,6 +4,7 @@ type SubscriptionData = {
 };
 
 type Video = {
+  id: string;
   title: string;
   link: string;
   published?: Date;

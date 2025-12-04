@@ -35,6 +35,7 @@
     "vite": "^7.2.2"
   },
   "dependencies": {
+    "@gonetone/get-youtube-id-by-url": "^2.0.0",
     "@node-rs/argon2": "^2.0.2",
     "better-sqlite3": "^12.4.1"
   }

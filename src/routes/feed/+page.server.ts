@@ -5,6 +5,7 @@ import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema";
 import { eq } from "drizzle-orm";
 import generateId from "$lib/server/generateId";
+import { channelId } from "@gonetone/get-youtube-id-by-url";
 
 let user: App.Locals["user"];
 
@@ -21,10 +22,12 @@ export const actions: Actions = {
     }
 
     const formData = await event.request.formData();
-    const youtubeId = formData.get("youtube-id");
-    if (typeof youtubeId !== "string") {
+    const youtubeUrl = formData.get("youtube-url");
+    if (typeof youtubeUrl !== "string") {
       return fail(400);
     }
+
+    const youtubeId = await channelId(youtubeUrl);
 
     await addSubscription(user.id, youtubeId);
     return redirect(302, "/feed");

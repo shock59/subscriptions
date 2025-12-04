@@ -6,6 +6,7 @@ import * as table from "$lib/server/db/schema";
 import { eq } from "drizzle-orm";
 import generateId from "$lib/server/generateId";
 import { channelId } from "@gonetone/get-youtube-id-by-url";
+import getYoutubeFeed from "$lib/server/getYoutubeFeed";
 
 let user: App.Locals["user"];
 
@@ -57,8 +58,10 @@ async function getSubscriptions(userId: string): Promise<SubscriptionData[]> {
         .from(table.channel)
         .where(eq(table.channel.id, subscription.channelId));
 
-      if (!channel[0]) return { youtubeName: "???" };
-      return { youtubeName: channel[0].youtubeId };
+      if (!channel[0]) return { name: "???", videos: [] };
+
+      const [name, videos] = await getYoutubeFeed(channel[0].youtubeId);
+      return { name, videos };
     }),
   );
 }

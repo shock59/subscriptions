@@ -1,3 +1,10 @@
 type SubscriptionData = {
-  youtubeName: string;
+  name: string;
+  videos: Video[];
+};
+
+type Video = {
+  title: string;
+  link: string;
+  published?: Date;
 };

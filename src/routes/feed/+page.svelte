@@ -8,7 +8,13 @@
 <h2>Your subscriptions</h2>
 <ul>
   {#each data.subscriptions as subscription}
-    <li>{subscription.youtubeName}</li>
+    <li>
+      {subscription.name}
+      <ul>
+        {#each subscription.videos as video}
+          <li><a href={video.link}>{video.title}</a></li>{/each}
+      </ul>
+    </li>
   {/each}
 </ul>
 

@@ -37,6 +37,7 @@
   "dependencies": {
     "@gonetone/get-youtube-id-by-url": "^2.0.0",
     "@node-rs/argon2": "^2.0.2",
-    "better-sqlite3": "^12.4.1"
+    "better-sqlite3": "^12.4.1",
+    "rss-parser": "^3.13.0"
   }
 }

@@ -31,6 +31,7 @@ export const subscription = sqliteTable("subscription", {
     .references(() => channel.id),
 });
 
-export type Session = typeof session.$inferSelect;
-
 export type User = typeof user.$inferSelect;
+export type Session = typeof session.$inferSelect;
+export type Channel = typeof channel.$inferSelect;
+export type Subscription = typeof subscription.$inferSelect;

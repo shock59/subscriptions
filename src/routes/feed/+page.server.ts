@@ -1,14 +1,34 @@
-import { redirect } from "@sveltejs/kit";
+import { fail, redirect, type Actions } from "@sveltejs/kit";
 import { getRequestEvent } from "$app/server";
 import type { PageServerLoad } from "./$types";
 import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema";
 import { eq } from "drizzle-orm";
+import generateId from "$lib/server/generateId";
+
+let user: App.Locals["user"];
 
 export const load: PageServerLoad = async () => {
-  const user = requireLogin();
+  user = requireLogin();
   const subscriptions = await getSubscriptions(user.id);
   return { user, subscriptions };
+};
+
+export const actions: Actions = {
+  addSubscription: async (event) => {
+    if (!user) {
+      return fail(401);
+    }
+
+    const formData = await event.request.formData();
+    const youtubeId = formData.get("youtube-id");
+    if (typeof youtubeId !== "string") {
+      return fail(400);
+    }
+
+    await addSubscription(user.id, youtubeId);
+    return redirect(302, "/feed");
+  },
 };
 
 function requireLogin() {
@@ -38,4 +58,31 @@ async function getSubscriptions(userId: string): Promise<SubscriptionData[]> {
       return { youtubeName: channel[0].youtubeId };
     }),
   );
+}
+
+async function addOrGetChannel(youtubeId: string): Promise<table.Channel> {
+  const channels = await db
+    .select()
+    .from(table.channel)
+    .where(eq(table.channel.youtubeId, youtubeId));
+
+  if (channels.length > 0) return channels[0];
+
+  const channel = {
+    id: generateId(),
+    youtubeId,
+  };
+  await db.insert(table.channel).values(channel);
+  return channel;
+}
+
+async function addSubscription(userId: string, youtubeId: string) {
+  const channel = await addOrGetChannel(youtubeId);
+  const subscription = {
+    id: generateId(),
+    creationDate: new Date(),
+    userId,
+    channelId: channel.id,
+  };
+  await db.insert(table.subscription).values(subscription);
 }

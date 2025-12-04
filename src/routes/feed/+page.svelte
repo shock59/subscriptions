@@ -1,19 +1,26 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import { onMount } from "svelte";
   import type { PageServerData } from "./$types";
 
   let { data }: { data: PageServerData } = $props();
+
+  let allVideos: (Video & { channelName: string })[] = $state([]);
+
+  onMount(() => {
+    allVideos = data.subscriptions.flatMap((subscription) =>
+      subscription.videos.map((video) => ({
+        ...video,
+        channelName: subscription.name,
+      })),
+    );
+  });
 </script>
 
-<h2>Your subscriptions</h2>
 <ul>
-  {#each data.subscriptions as subscription}
+  {#each allVideos.toSorted((a, b) => (b.published?.getTime() ?? 0) - (a.published?.getTime() ?? 0)) as video}
     <li>
-      {subscription.name}
-      <ul>
-        {#each subscription.videos as video}
-          <li><a href={video.link}>{video.title}</a></li>{/each}
-      </ul>
+      <a href={video.link}>{video.title}</a> - {video.channelName} ({video.published?.toDateString()})
     </li>
   {/each}
 </ul>

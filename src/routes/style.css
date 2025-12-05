@@ -1,7 +1,12 @@
 :root {
-  color-scheme: light dark;
+  font-size: 16px;
+
+  --serif: "Source Serif 4", serif;
 }
 
 body {
-  font-family: system-ui;
+  margin: 0;
+  font-family: "Source Sans 3", sans-serif;
+  color: #efefef;
+  background: #101010;
 }

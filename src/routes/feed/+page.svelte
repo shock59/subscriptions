@@ -5,21 +5,40 @@
 
   let { data }: { data: PageServerData } = $props();
 
+  let addSubscriptionDialog: HTMLDialogElement;
+
+  let subscriptions: SubscriptionData[] = $state([]);
   let allVideos: (Video & { channelName: string })[] = $state([]);
 
   function youtubeThumbnail(videoId: string) {
     return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
   }
 
-  onMount(() => {
-    allVideos = data.subscriptions.flatMap((subscription) =>
+  function updateAllVideos() {
+    allVideos = subscriptions.flatMap((subscription) =>
       subscription.videos.map((video) => ({
         ...video,
         channelName: subscription.name,
       })),
     );
+  }
+
+  onMount(() => {
+    subscriptions = data.subscriptions;
+    updateAllVideos();
   });
 </script>
+
+<div id="header">
+  <div id="header-content">
+    <b>Your feed</b>
+
+    <button
+      id="add-subscription-button"
+      onclick={() => addSubscriptionDialog.showModal()}>Add subscription</button
+    >
+  </div>
+</div>
 
 <div id="videos-container">
   {#each allVideos.toSorted((a, b) => (b.published?.getTime() ?? 0) - (a.published?.getTime() ?? 0)) as video}
@@ -39,27 +58,73 @@
   {/each}
 </div>
 
-<h2>Add a subscription</h2>
-<form method="post" action="?/addSubscription" use:enhance>
-  <p>
-    <label for="youtube-url-input">YouTube Channel URL</label>
-    <input id="youtube-url-input" name="youtube-url" type="text" />
-  </p>
+<dialog id="add-subscription-dialog" bind:this={addSubscriptionDialog}>
+  <form
+    method="post"
+    action="?/addSubscription"
+    use:enhance={() => {
+      return async ({ result }) => {
+        if (result.type == "failure") {
+          alert(`Error ${result.status}`);
+        } else if (result.type == "success") {
+          subscriptions =
+            (result.data?.subscriptions as SubscriptionData[]) ?? [];
+          updateAllVideos();
+          addSubscriptionDialog.close();
+        }
+      };
+    }}
+  >
+    <p>
+      <label for="youtube-url-input">YouTube Channel URL</label>
+      <input id="youtube-url-input" name="youtube-url" type="text" />
+    </p>
 
-  <p>
-    <button type="submit">Submit</button>
-  </p>
-</form>
+    <p>
+      <button type="submit">Submit</button>
+    </p>
+  </form>
+</dialog>
 
 <style>
+  #header {
+    width: calc(100%);
+    background: #202020;
+  }
+
+  #header-content {
+    max-width: 62.6em;
+    padding: 0.6em 1.2em;
+    display: flex;
+  }
+
+  #add-subscription-button {
+    margin: 0;
+    margin-left: auto;
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+    color: inherit;
+    font: inherit;
+  }
+
+  #add-subscription-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
   #videos-container {
-    font-size: 16px;
-    margin: 0 1.2rem;
+    max-width: 65em;
+  }
+  #header-content,
+  #videos-container {
+    margin: 0 auto;
   }
 
   .video {
     height: 10rem;
-    margin: 0.6rem 0;
+    margin: 0.6em 1.2em;
     display: flex;
     flex-direction: row;
     color: inherit;
@@ -73,8 +138,9 @@
   }
 
   .video-title {
+    font-family: var(--serif);
     font-size: 24px;
-    font-weight: bold;
+    font-weight: 700;
   }
 
   .video-description {

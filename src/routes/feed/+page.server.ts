@@ -31,7 +31,7 @@ export const actions: Actions = {
     const youtubeId = await channelId(youtubeUrl);
 
     await addSubscription(user.id, youtubeId);
-    return redirect(302, "/feed");
+    return { subscriptions: await getSubscriptions(user.id) };
   },
 };
 

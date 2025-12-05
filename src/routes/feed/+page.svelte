@@ -36,7 +36,8 @@
 
     <button
       class="link-style-button"
-      onclick={() => addSubscriptionDialog.showModal()}>Add subscription</button
+      onclick={() => addSubscriptionDialog.showModal()}
+      >Manage subscriptions</button
     >
   </div>
 </div>
@@ -96,6 +97,14 @@
       <span class="error">{addSubscriptionFormError}</span>
     </div>
   </form>
+
+  <div class="dialog-header">
+    <b>Current subscriptions</b>
+  </div>
+
+  {#each subscriptions.toSorted( (a, b) => a.name.localeCompare(b.name), ) as subscription}
+    <div class="form-row">{subscription.name}</div>
+  {/each}
 </dialog>
 
 <style>

@@ -35,11 +35,13 @@
   <div id="header-content">
     <b>Your feed</b>
 
-    <button
-      class="link-style-button"
-      onclick={() => addSubscriptionDialog.showModal()}
-      >Manage subscriptions</button
-    >
+    <div class="grow">
+      <button
+        class="link-style-button"
+        onclick={() => addSubscriptionDialog.showModal()}>Subscriptions</button
+      >
+      <a class="link-style-button" href="/account">Account</a>
+    </div>
   </div>
 </div>
 
@@ -64,10 +66,12 @@
 <dialog id="add-subscription-dialog" bind:this={addSubscriptionDialog}>
   <div class="dialog-header">
     <b>Add Subscription</b>
-    <button
-      class="link-style-button"
-      onclick={() => addSubscriptionDialog.close()}>Close</button
-    >
+    <div class="grow">
+      <button
+        class="link-style-button"
+        onclick={() => addSubscriptionDialog.close()}>Close</button
+      >
+    </div>
   </div>
 
   <form
@@ -147,7 +151,10 @@
 <style>
   #header {
     width: calc(100%);
+    position: fixed;
+    top: 0;
     background: #202020;
+    z-index: 1;
   }
 
   #header-content {
@@ -156,15 +163,21 @@
     display: flex;
   }
 
+  div.grow {
+    display: flex;
+    flex-grow: 1;
+  }
+
   .link-style-button {
     margin: 0;
-    margin-left: auto;
+    margin-left: 1.2em;
     padding: 0;
     background: none;
     border: none;
     outline: none;
     color: inherit;
     font: inherit;
+    text-decoration: none;
   }
 
   .link-style-button:hover {
@@ -172,14 +185,19 @@
     cursor: pointer;
   }
 
-  #videos-container {
-    max-width: 65em;
+  .link-style-button:first-child {
+    margin-left: auto;
   }
+
   #header-content,
   #videos-container {
     margin: 0 auto;
   }
 
+  #videos-container {
+    max-width: 65em;
+    margin-top: 3.2em;
+  }
   .video {
     height: 10rem;
     margin: 0.6em 1.2em;

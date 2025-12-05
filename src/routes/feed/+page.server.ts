@@ -23,12 +23,22 @@ export const actions: Actions = {
     }
 
     const formData = await event.request.formData();
-    const youtubeUrl = formData.get("youtube-url");
+    let youtubeUrl = formData.get("youtube-url");
     if (typeof youtubeUrl !== "string") {
       return fail(400);
     }
+    youtubeUrl = youtubeUrl.trim();
 
-    const youtubeId = await channelId(youtubeUrl);
+    if (youtubeUrl.length == 0) {
+      return fail(400, { message: "Enter a valid channel URL" });
+    }
+
+    let youtubeId;
+    try {
+      youtubeId = await channelId(youtubeUrl);
+    } catch {
+      return fail(400, { message: "Enter a valid channel URL" });
+    }
 
     await addSubscription(user.id, youtubeId);
     return { subscriptions: await getSubscriptions(user.id) };

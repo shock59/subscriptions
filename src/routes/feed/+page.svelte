@@ -9,6 +9,7 @@
 
   let subscriptions: SubscriptionData[] = $state([]);
   let allVideos: (Video & { channelName: string })[] = $state([]);
+  let addSubscriptionFormError: string = $state("");
 
   function youtubeThumbnail(videoId: string) {
     return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
@@ -34,7 +35,7 @@
     <b>Your feed</b>
 
     <button
-      id="add-subscription-button"
+      class="link-style-button"
       onclick={() => addSubscriptionDialog.showModal()}>Add subscription</button
     >
   </div>
@@ -59,13 +60,22 @@
 </div>
 
 <dialog id="add-subscription-dialog" bind:this={addSubscriptionDialog}>
+  <div class="dialog-header">
+    <b>Add Subscription</b>
+    <button
+      class="link-style-button"
+      onclick={() => addSubscriptionDialog.close()}>Close</button
+    >
+  </div>
+
   <form
     method="post"
     action="?/addSubscription"
     use:enhance={() => {
       return async ({ result }) => {
         if (result.type == "failure") {
-          alert(`Error ${result.status}`);
+          addSubscriptionFormError =
+            (result.data?.message as string) ?? `Error ${result.status}`;
         } else if (result.type == "success") {
           subscriptions =
             (result.data?.subscriptions as SubscriptionData[]) ?? [];
@@ -75,14 +85,16 @@
       };
     }}
   >
-    <p>
+    <div class="form-row">
       <label for="youtube-url-input">YouTube Channel URL</label>
       <input id="youtube-url-input" name="youtube-url" type="text" />
-    </p>
+    </div>
 
-    <p>
+    <div class="form-row">
       <button type="submit">Submit</button>
-    </p>
+
+      <span class="error">{addSubscriptionFormError}</span>
+    </div>
   </form>
 </dialog>
 
@@ -98,7 +110,7 @@
     display: flex;
   }
 
-  #add-subscription-button {
+  .link-style-button {
     margin: 0;
     margin-left: auto;
     padding: 0;
@@ -109,7 +121,7 @@
     font: inherit;
   }
 
-  #add-subscription-button:hover {
+  .link-style-button:hover {
     text-decoration: underline;
     cursor: pointer;
   }
@@ -145,5 +157,57 @@
 
   .video-description {
     opacity: 0.65;
+  }
+
+  dialog {
+    width: 45em;
+    padding: 0;
+    border: none;
+    background: #101010;
+    color: inherit;
+  }
+
+  dialog::backdrop {
+    background: rgb(0, 0, 0, 0.65);
+  }
+
+  .dialog-header {
+    width: calc(100% - 2.4em);
+    padding: 0.6em 1.2em;
+    display: flex;
+    background: #202020;
+  }
+
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin: 0.6em 1.2em;
+  }
+
+  .form-row label {
+    margin-right: 0.6em;
+  }
+
+  .form-row input {
+    flex-grow: 1;
+  }
+
+  input,
+  button {
+    padding: 0.6em 1.2em;
+    background: #202020;
+    border: none;
+    outline: none;
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  .form-row .error {
+    margin-left: 0.6em;
+    color: #ff5454;
   }
 </style>

@@ -40,7 +40,18 @@ export const actions: Actions = {
       return fail(400, { message: "Enter a valid channel URL" });
     }
 
-    await addSubscription(user.id, youtubeId);
+    const channel = await addOrGetChannel(youtubeId);
+    const results = await db
+      .select()
+      .from(table.subscription)
+      .where(eq(table.subscription.channelId, channel.id));
+    if (results.length > 0) {
+      return fail(409, {
+        message: "You have already subscribed to that channel",
+      });
+    }
+
+    await addSubscription(user.id, channel.id);
     return { subscriptions: await getSubscriptions(user.id) };
   },
 
@@ -127,13 +138,12 @@ async function addOrGetChannel(youtubeId: string): Promise<table.Channel> {
   return channel;
 }
 
-async function addSubscription(userId: string, youtubeId: string) {
-  const channel = await addOrGetChannel(youtubeId);
+async function addSubscription(userId: string, channelId: string) {
   const subscription = {
     id: generateId(),
     creationDate: new Date(),
     userId,
-    channelId: channel.id,
+    channelId,
   };
   await db.insert(table.subscription).values(subscription);
 }

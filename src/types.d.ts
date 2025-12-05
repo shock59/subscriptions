@@ -1,4 +1,5 @@
-type SubscriptionData = {
+type FullSubscriptionData = import("$lib/server/db/schema").Subscription & {
+  youtubeId: string;
   name: string;
   videos: Video[];
 };

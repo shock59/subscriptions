@@ -43,6 +43,37 @@ export const actions: Actions = {
     await addSubscription(user.id, youtubeId);
     return { subscriptions: await getSubscriptions(user.id) };
   },
+
+  removeSubscription: async (event) => {
+    if (!user) {
+      return fail(401);
+    }
+
+    const formData = await event.request.formData();
+    let subscriptionId = formData.get("subscription-id");
+    if (typeof subscriptionId !== "string") {
+      return fail(400);
+    }
+
+    const results = await db
+      .select()
+      .from(table.subscription)
+      .where(eq(table.subscription.id, subscriptionId));
+    if (results.length == 0) {
+      return fail(404);
+    }
+
+    const subscription = results[0];
+    if (subscription.userId != user.id) {
+      return fail(403);
+    }
+
+    console.log(subscription.id);
+
+    await db
+      .delete(table.subscription)
+      .where(eq(table.subscription.id, subscription.id));
+  },
 };
 
 function requireLogin() {
@@ -55,7 +86,9 @@ function requireLogin() {
   return locals.user;
 }
 
-async function getSubscriptions(userId: string): Promise<SubscriptionData[]> {
+async function getSubscriptions(
+  userId: string,
+): Promise<FullSubscriptionData[]> {
   const subscriptions = await db
     .select()
     .from(table.subscription)
@@ -68,10 +101,12 @@ async function getSubscriptions(userId: string): Promise<SubscriptionData[]> {
         .from(table.channel)
         .where(eq(table.channel.id, subscription.channelId));
 
-      if (!channel[0]) return { name: "???", videos: [] };
+      if (!channel[0])
+        return { ...subscription, youtubeId: "???", name: "???", videos: [] };
 
-      const [name, videos] = await getYoutubeFeed(channel[0].youtubeId);
-      return { name, videos };
+      const youtubeId = channel[0].youtubeId;
+      const [name, videos] = await getYoutubeFeed(youtubeId);
+      return { ...subscription, youtubeId, name, videos };
     }),
   );
 }

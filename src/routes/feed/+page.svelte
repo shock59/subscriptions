@@ -7,7 +7,7 @@
 
   let addSubscriptionDialog: HTMLDialogElement;
 
-  let subscriptions: SubscriptionData[] = $state([]);
+  let subscriptions: FullSubscriptionData[] = $state([]);
   let allVideos: (Video & { channelName: string })[] = $state([]);
   let addSubscriptionFormError: string = $state("");
 
@@ -79,7 +79,7 @@
             (result.data?.message as string) ?? `Error ${result.status}`;
         } else if (result.type == "success") {
           subscriptions =
-            (result.data?.subscriptions as SubscriptionData[]) ?? [];
+            (result.data?.subscriptions as FullSubscriptionData[]) ?? [];
           updateAllVideos();
           addSubscriptionDialog.close();
         }
@@ -103,7 +103,33 @@
   </div>
 
   {#each subscriptions.toSorted( (a, b) => a.name.localeCompare(b.name), ) as subscription}
-    <div class="form-row">{subscription.name}</div>
+    <div class="form-row">
+      <a
+        href="https://www.youtube.com/channel/{subscription.youtubeId}"
+        target="_blank">{subscription.name}</a
+      >
+      <form
+        method="post"
+        action="?/removeSubscription"
+        use:enhance={() => {
+          return async ({ result }) => {
+            if (result.type == "failure") {
+              addSubscriptionFormError =
+                (result.data?.message as string) ?? `Error ${result.status}`;
+            } else if (result.type == "success") {
+              subscriptions = subscriptions.toSpliced(
+                subscriptions.indexOf(subscription),
+                1,
+              );
+              updateAllVideos();
+            }
+          };
+        }}
+      >
+        <input value={subscription.id} name="subscription-id" class="hidden" />
+        <button class="link-style-button">Remove</button>
+      </form>
+    </div>
   {/each}
 </dialog>
 
@@ -170,6 +196,7 @@
 
   dialog {
     width: 45em;
+    margin-top: 1.2em;
     padding: 0;
     border: none;
     background: #101010;
@@ -215,8 +242,19 @@
     cursor: pointer;
   }
 
+  .form-row a {
+    color: #5490ff;
+  }
   .form-row .error {
     margin-left: 0.6em;
     color: #ff5454;
+  }
+
+  .form-row form {
+    margin-left: auto;
+  }
+
+  .hidden {
+    display: none;
   }
 </style>

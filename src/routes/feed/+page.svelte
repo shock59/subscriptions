@@ -10,6 +10,7 @@
   let subscriptions: FullSubscriptionData[] = $state([]);
   let allVideos: (Video & { channelName: string })[] = $state([]);
   let addSubscriptionFormError: string = $state("");
+  let disableAddSubscriptionForm: boolean = $state(false);
 
   function youtubeThumbnail(videoId: string) {
     return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
@@ -72,8 +73,12 @@
   <form
     method="post"
     action="?/addSubscription"
+    onsubmit={() => {
+      requestAnimationFrame(() => (disableAddSubscriptionForm = true));
+    }}
     use:enhance={() => {
       return async ({ result }) => {
+        disableAddSubscriptionForm = false;
         if (result.type == "failure") {
           addSubscriptionFormError =
             (result.data?.message as string) ?? `Error ${result.status}`;
@@ -88,11 +93,17 @@
   >
     <div class="form-row">
       <label for="youtube-url-input">YouTube Channel URL</label>
-      <input id="youtube-url-input" name="youtube-url" type="text" />
+      <input
+        id="youtube-url-input"
+        name="youtube-url"
+        type="text"
+        disabled={disableAddSubscriptionForm}
+      />
     </div>
 
     <div class="form-row">
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={disableAddSubscriptionForm}>Submit</button
+      >
 
       <span class="error">{addSubscriptionFormError}</span>
     </div>
@@ -236,6 +247,12 @@
     outline: none;
     font: inherit;
     color: inherit;
+  }
+
+  input:disabled,
+  button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
   }
 
   button {

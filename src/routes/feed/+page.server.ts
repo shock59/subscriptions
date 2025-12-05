@@ -25,6 +25,7 @@ export const actions: Actions = {
     const formData = await event.request.formData();
     let youtubeUrl = formData.get("youtube-url");
     if (typeof youtubeUrl !== "string") {
+      console.log(youtubeUrl);
       return fail(400);
     }
     youtubeUrl = youtubeUrl.trim();

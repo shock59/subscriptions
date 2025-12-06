@@ -169,20 +169,7 @@
   }
 
   .link-style-button {
-    margin: 0;
     margin-left: 1.2em;
-    padding: 0;
-    background: none;
-    border: none;
-    outline: none;
-    color: inherit;
-    font: inherit;
-    text-decoration: none;
-  }
-
-  .link-style-button:hover {
-    text-decoration: underline;
-    cursor: pointer;
   }
 
   .link-style-button:first-child {
@@ -241,55 +228,5 @@
     padding: 0.6em 1.2em;
     display: flex;
     background: #202020;
-  }
-
-  .form-row {
-    display: flex;
-    align-items: center;
-    margin: 0.6em 1.2em;
-  }
-
-  .form-row label {
-    margin-right: 0.6em;
-  }
-
-  .form-row input {
-    flex-grow: 1;
-  }
-
-  input,
-  button {
-    padding: 0.6em 1.2em;
-    background: #202020;
-    border: none;
-    outline: none;
-    font: inherit;
-    color: inherit;
-  }
-
-  input:disabled,
-  button:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
-
-  button {
-    cursor: pointer;
-  }
-
-  .form-row a {
-    color: #5490ff;
-  }
-  .form-row .error {
-    margin-left: 0.6em;
-    color: #ff5454;
-  }
-
-  .form-row form {
-    margin-left: auto;
-  }
-
-  .hidden {
-    display: none;
   }
 </style>

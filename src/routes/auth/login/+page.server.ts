@@ -6,6 +6,10 @@ import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema";
 import type { Actions, PageServerLoad } from "./$types";
 import generateId from "$lib/server/generateId";
+import {
+  validatePassword,
+  validateUsername,
+} from "$lib/server/validateCredentials";
 
 export const load: PageServerLoad = async (event) => {
   if (event.locals.user) {
@@ -100,20 +104,3 @@ export const actions: Actions = {
     return redirect(302, "/");
   },
 };
-
-function validateUsername(username: unknown): username is string {
-  return (
-    typeof username === "string" &&
-    username.length >= 3 &&
-    username.length <= 31 &&
-    /^[a-z0-9_-]+$/.test(username)
-  );
-}
-
-function validatePassword(password: unknown): password is string {
-  return (
-    typeof password === "string" &&
-    password.length >= 6 &&
-    password.length <= 255
-  );
-}

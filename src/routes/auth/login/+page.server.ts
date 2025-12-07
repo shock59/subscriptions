@@ -22,13 +22,12 @@ export const actions: Actions = {
 
     if (!validateUsername(username)) {
       return fail(400, {
-        message:
-          "Invalid username (min 3, max 31 characters, alphanumeric only)",
+        message: "Invalid username",
       });
     }
     if (!validatePassword(password)) {
       return fail(400, {
-        message: "Invalid password (min 6, max 255 characters)",
+        message: "Invalid password",
       });
     }
 
@@ -64,10 +63,15 @@ export const actions: Actions = {
     const password = formData.get("password");
 
     if (!validateUsername(username)) {
-      return fail(400, { message: "Invalid username" });
+      return fail(400, {
+        message:
+          "Invalid username (must be between 3 and 31 characters, and only include lowercase letters, numbers, underscores and hyphens)",
+      });
     }
     if (!validatePassword(password)) {
-      return fail(400, { message: "Invalid password" });
+      return fail(400, {
+        message: "Invalid password (must be between 6 and 255 characters)",
+      });
     }
 
     const userId = generateId();

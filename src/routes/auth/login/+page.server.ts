@@ -1,4 +1,4 @@
-import { hash, verify } from "@node-rs/argon2";
+import { verify } from "@node-rs/argon2";
 import { fail, redirect } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import * as auth from "$lib/server/auth";
@@ -10,6 +10,8 @@ import {
   validatePassword,
   validateUsername,
 } from "$lib/server/validateCredentials";
+import genPasswordHash from "$lib/server/genPasswordHash";
+import { isUsernameTaken } from "$lib/isUsernameTaken";
 
 export const load: PageServerLoad = async (event) => {
   if (event.locals.user) {
@@ -72,6 +74,11 @@ export const actions: Actions = {
           "Invalid username (must be between 3 and 31 characters, and only include lowercase letters, numbers, underscores and hyphens)",
       });
     }
+    if (await isUsernameTaken(username)) {
+      return fail(400, {
+        message: "Username is already taken",
+      });
+    }
     if (!validatePassword(password)) {
       return fail(400, {
         message: "Invalid password (must be between 6 and 255 characters)",
@@ -79,13 +86,7 @@ export const actions: Actions = {
     }
 
     const userId = generateId();
-    const passwordHash = await hash(password, {
-      // recommended minimum parameters
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    });
+    const passwordHash = await genPasswordHash(password);
 
     try {
       await db.insert(table.user).values({

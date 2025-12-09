@@ -1,37 +1,49 @@
+<script lang="ts">
+  import { enhance } from "$app/forms";
+  import type { ActionData, PageServerData } from "./$types";
+
+  let { data, form }: { data: PageServerData; form: ActionData } = $props();
+</script>
+
 <div id="account-settings">
   <div class="form-row">
     <a href="/feed" class="link-style-button">Back to your feed</a>
   </div>
   <h2>Account settings</h2>
 
-  <form>
+  <div class="form-row">
+    Your user ID is {data.user.id}.
+  </div>
+
+  <form method="POST" action="?/changeUsername" use:enhance>
     <div class="form-row">
       <label for="username-input">Username</label>
-      <input id="username-input" type="text" />
+      <input
+        id="username-input"
+        name="username"
+        type="text"
+        defaultValue={data.user.username}
+      />
       <button>Update username</button>
     </div>
   </form>
-  <form>
+  <form method="POST" action="?/changePassword" use:enhance>
     <div class="form-row">
       <label for="password-input">Password</label>
-      <input id="password-input" type="password" />
+      <input id="password-input" name="password" type="password" />
       <button>Update password</button>
     </div>
   </form>
 
-  <form>
+  <form method="POST" action="?/logout" use:enhance>
     <div class="form-row">
       <button>Sign out</button>
     </div>
   </form>
 
-  <div class="spacer"></div>
+  <p style="color: red">{form?.message ?? ""}</p>
 
-  <form>
-    <div class="form-row">
-      <button>Delete account</button>
-    </div>
-  </form>
+  <div class="spacer"></div>
 </div>
 
 <style>

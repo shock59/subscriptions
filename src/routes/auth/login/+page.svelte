@@ -10,8 +10,8 @@
   <form method="post" action="?/login" use:enhance>
     <p>
       <label>
-        Username
-        <input name="username" />
+        Email
+        <input type="email" name="username" />
       </label>
     </p>
 

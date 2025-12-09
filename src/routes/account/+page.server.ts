@@ -67,12 +67,12 @@ async function updateUserDetail(
       if (!validateUsername(formData)) {
         return fail(400, {
           message:
-            "Invalid username (must be between 3 and 31 characters, and only include lowercase letters, numbers, underscores and hyphens)",
+            "Invalid email (must be between 3 and 255 characters and be a valid email address)",
         });
       }
       if (await isUsernameTaken(formData)) {
         return fail(400, {
-          message: "Username is already taken",
+          message: "Email is already taken",
         });
       }
 

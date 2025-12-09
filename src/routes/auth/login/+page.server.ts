@@ -12,6 +12,8 @@ import {
 } from "$lib/server/validateCredentials";
 import genPasswordHash from "$lib/server/genPasswordHash";
 import { isUsernameTaken } from "$lib/isUsernameTaken";
+import sendEmail from "$lib/server/sendEmail";
+import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async (event) => {
   if (event.locals.user) {
@@ -71,12 +73,12 @@ export const actions: Actions = {
     if (!validateUsername(username)) {
       return fail(400, {
         message:
-          "Invalid username (must be between 3 and 31 characters, and only include lowercase letters, numbers, underscores and hyphens)",
+          "Invalid email (must be between 3 and 255 characters and be a valid email address)",
       });
     }
     if (await isUsernameTaken(username)) {
       return fail(400, {
-        message: "Username is already taken",
+        message: "Email is already taken",
       });
     }
     if (!validatePassword(password)) {
@@ -95,6 +97,21 @@ export const actions: Actions = {
         username,
         passwordHash,
       });
+
+      const baseEmailContent = `Hi ${username.split("@")[0]},
+      
+Thank you for signing up and welcome to Subscriptions! You can now follow all of your favourite YouTube channels without a subscription. We hope you enjoy using the service.`;
+      sendEmail(
+        username,
+        "Welcome to Subscriptions",
+        baseEmailContent,
+        baseEmailContent
+          .replace("\n\n", "<br>")
+          .replace(
+            "Subscriptions",
+            `<a href="${env.WEBSITE_URL}">Subscriptions</a>`,
+          ),
+      );
 
       const sessionToken = auth.generateSessionToken();
       const session = await auth.createSession(sessionToken, userId);

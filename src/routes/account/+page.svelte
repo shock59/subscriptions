@@ -19,14 +19,14 @@
 
   <form method="POST" action="?/changeUsername" use:enhance>
     <div class="form-row">
-      <label for="username-input">Username</label>
+      <label for="username-input">Email</label>
       <input
         id="username-input"
         name="username"
         type="text"
         defaultValue={data.user.username}
       />
-      <button>Update username</button>
+      <button>Update email</button>
     </div>
   </form>
   <form method="POST" action="?/changePassword" use:enhance>

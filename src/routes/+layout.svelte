@@ -1,12 +1,26 @@
 <script lang="ts">
-  import favicon from "$lib/assets/favicon.svg";
   import "./style.css";
+  import faviconLight from "$lib/assets/favicon/light.png";
+  import faviconDark from "$lib/assets/favicon/dark.png";
 
   let { children } = $props();
 </script>
 
 <svelte:head>
-  <link rel="icon" href={favicon} />
+  <title>Subscriptions</title>
+  <link rel="icon" href={faviconLight} type="image/x-icon" />
+  <link
+    rel="icon"
+    href={faviconLight}
+    type="image/x-icon"
+    media="(prefers-color-scheme: light)"
+  />
+  <link
+    rel="icon"
+    href={faviconDark}
+    type="image/x-icon"
+    media="(prefers-color-scheme: dark)"
+  />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link

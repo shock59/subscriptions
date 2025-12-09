@@ -210,23 +210,7 @@
     opacity: 0.65;
   }
 
-  dialog {
-    width: 45em;
-    margin-top: 1.2em;
-    padding: 0;
-    border: none;
-    background: #101010;
-    color: inherit;
-  }
-
-  dialog::backdrop {
-    background: rgb(0, 0, 0, 0.65);
-  }
-
-  .dialog-header {
-    width: calc(100% - 2.4em);
-    padding: 0.6em 1.2em;
-    display: flex;
-    background: #202020;
+  .form-row form {
+    margin-left: auto;
   }
 </style>

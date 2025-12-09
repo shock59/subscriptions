@@ -22,6 +22,7 @@ export const actions: Actions = {
   changeUsername: async (event) => updateUserDetail("username", event),
   changePassword: async (event) => updateUserDetail("password", event),
   logout,
+  deleteAccount,
 };
 
 function requireLogin() {
@@ -99,6 +100,23 @@ async function updateUserDetail(
   );
 
   await logout(event, "/auth/login");
+}
+
+async function deleteAccount(event: RequestEvent) {
+  const user = requireLogin();
+
+  if (!user || !event?.locals?.session?.id) {
+    return fail(401);
+  }
+
+  await auth.invalidateSession(event.locals.session.id);
+  auth.deleteSessionTokenCookie(event);
+  await db
+    .delete(table.subscription)
+    .where(eq(table.subscription.userId, user.id));
+  await db.delete(table.user).where(eq(table.user.id, user.id));
+
+  return redirect(302, "/");
 }
 
 function updateUser(

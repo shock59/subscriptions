@@ -3,6 +3,8 @@
   import type { ActionData, PageServerData } from "./$types";
 
   let { data, form }: { data: PageServerData; form: ActionData } = $props();
+
+  let dialog: HTMLDialogElement;
 </script>
 
 <div id="account-settings">
@@ -44,7 +46,26 @@
   <p style="color: red">{form?.message ?? ""}</p>
 
   <div class="spacer"></div>
+
+  <div class="form-row">
+    <button onclick={() => dialog.showModal()}>Delete account</button>
+  </div>
 </div>
+
+<dialog bind:this={dialog}>
+  <div class="dialog-header">Delete account</div>
+  <div class="form-row">
+    Are you sure you want to delete your account? This cannot be undone!!!
+  </div>
+  <div class="form-row">
+    <button onclick={() => dialog.close()}>Cancel</button>
+  </div>
+  <div class="form-row">
+    <form method="post" action="?/deleteAccount">
+      <button>Delete account</button>
+    </form>
+  </div>
+</dialog>
 
 <style>
   #account-settings {
@@ -53,11 +74,11 @@
     margin-top: 1.2em;
   }
 
-  form {
+  #account-settings form {
     padding-top: 0.6em;
   }
 
-  .form-row {
+  #account-settings .form-row {
     margin: 0;
   }
 

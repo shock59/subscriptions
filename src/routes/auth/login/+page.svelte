@@ -5,17 +5,33 @@
   let { form }: { form: ActionData } = $props();
 </script>
 
-<h1>Login/Register</h1>
-<form method="post" action="?/login" use:enhance>
-  <label>
-    Username
-    <input name="username" />
-  </label>
-  <label>
-    Password
-    <input type="password" name="password" />
-  </label>
-  <button>Login</button>
-  <button formaction="?/register">Register</button>
-</form>
-<p style="color: red">{form?.message ?? ""}</p>
+<main>
+  <h1>Login/Register</h1>
+  <form method="post" action="?/login" use:enhance>
+    <p>
+      <label>
+        Username
+        <input name="username" />
+      </label>
+    </p>
+
+    <p>
+      <label>
+        Password
+        <input type="password" name="password" />
+      </label>
+    </p>
+
+    <p>
+      <button>Login</button>
+      <button formaction="?/register">Register</button>
+    </p>
+  </form>
+  <p style="color: red">{form?.message ?? ""}</p>
+</main>
+
+<style>
+  main {
+    text-align: center;
+  }
+</style>
